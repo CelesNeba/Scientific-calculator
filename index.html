@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scientific Calculator</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #e0e4e8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .calculator {
+    background: #2f3640;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    width: 360px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #input {
+    width: 100%;
+    height: 50px;
+    font-size: 1.6rem;
+    text-align: right;
+    border: none;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    padding: 10px;
+    background: #1e272e;
+    color: #f5f6fa;
+  }
+  #liveResult {
+    width: 100%;
+    text-align: right;
+    color: #4cd137;
+    font-size: 1.3rem;
+    min-height: 20px;
+    margin-bottom: 15px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    width: 100%;
+  }
+  button {
+    padding: 12px 0;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    color: #f5f6fa;
+    background: linear-gradient(145deg, #485460, #1e272e);
+    box-shadow: 0 4px #1e272e;
+    transition: all 0.2s ease-in-out;
+  }
+  button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px #1e272e;
+  }
+  button.operator {
+    background: linear-gradient(145deg, #ff793f, #d35400);
+    box-shadow: 0 4px #b34700;
+  }
+  button.func {
+    background: linear-gradient(145deg, #9c88ff, #6c5ce7);
+    box-shadow: 0 4px #5d4ebc;
+  }
+  button.equal {
+    background: linear-gradient(145deg, #4cd137, #27ae60);
+    box-shadow: 0 4px #1e8e3e;
+    color: #fff;
+  }
+  button.clear {
+    background: linear-gradient(145deg, #e84118, #c23616);
+    box-shadow: 0 4px #911c0f;
+  }
+</style>
+</head>
+<body>
+
+<div class="calculator">
+  <input type="text" id="input" readonly placeholder="0" />
+  <div id="liveResult"></div>
+  <div class="buttons">
+    <button class="func" onclick="append('sin(')">sin</button>
+    <button class="func" onclick="append('cos(')">cos</button>
+    <button class="func" onclick="append('tan(')">tan</button>
+    <button class="func" onclick="append('log(')">log</button>
+    <button class="func" onclick="append('√(')">√</button>
+
+    <button onclick="append('7')">7</button>
+    <button onclick="append('8')">8</button>
+    <button onclick="append('9')">9</button>
+    <button class="operator" onclick="append('÷')">÷</button>
+    <button class="func" onclick="append('^')">^</button>
+
+    <button onclick="append('4')">4</button>
+    <button onclick="append('5')">5</button>
+    <button onclick="append('6')">6</button>
+    <button class="operator" onclick="append('×')">×</button>
+    <button class="func" onclick="append('(')">(</button>
+
+    <button onclick="append('1')">1</button>
+    <button onclick="append('2')">2</button>
+    <button onclick="append('3')">3</button>
+    <button class="operator" onclick="append('−')">−</button>
+    <button class="func" onclick="append(')')">)</button>
+
+    <button onclick="append('0')">0</button>
+    <button onclick="append('.')">.</button>
+    <button class="operator" onclick="append('+')">+</button>
+    <button class="func" onclick="append('π')">π</button>
+    <button class="func" onclick="append('e')">e</button>
+
+    <button class="clear" onclick="clearInput()">C</button>
+    <button onclick="deleteLast()">⌫</button>
+    <button class="equal" onclick="calculate()">=</button>
+  </div>
+</div>
+
+<script>
+  function append(value) {
+    const input = document.getElementById('input');
+    if (input.value === "Error") {
+      input.value = value;
+    } else {
+      input.value += value;
+    }
+    showLiveResult();
+  }
+
+  function showLiveResult() {
+    const inputVal = document.getElementById('input').value;
+    const liveResult = document.getElementById('liveResult');
+    try {
+      let expression = parseExpression(inputVal);
+      let result = eval(expression);
+      if (inputVal && !isNaN(result)) {
+        liveResult.textContent = "= " + result;
+        liveResult.style.opacity = 1;
+      } else {
+        liveResult.textContent = "";
+        liveResult.style.opacity = 0;
+      }
+    } catch {
+      liveResult.textContent = "";
+      liveResult.style.opacity = 0;
+    }
+  }
+
+  function calculate() {
+    const input = document.getElementById('input');
+    try {
+      let expression = parseExpression(input.value);
+      input.value = eval(expression);
+      document.getElementById('liveResult').style.opacity = 0;
+    } catch {
+      input.value = "Error";
+      document.getElementById('liveResult').style.opacity = 0;
+    }
+  }
+
+  function clearInput() {
+    document.getElementById('input').value = "";
+    document.getElementById('liveResult').textContent = "";
+    document.getElementById('liveResult').style.opacity = 0;
+  }
+
+  function deleteLast() {
+    const input = document.getElementById('input');
+    if (input.value && input.value !== "Error") {
+      input.value = input.value.slice(0, -1);
+      showLiveResult();
+    }
+  }
+
+  function parseExpression(expr) {
+    return expr
+      .replace(/×/g, '*')
+      .replace(/÷/g, '/')
+      .replace(/−/g, '-')
+      .replace(/π/g, 'Math.PI')
+      .replace(/e/g, 'Math.E')
+      .replace(/√\(/g, 'Math.sqrt(')
+      .replace(/sin\(/g, 'Math.sin(')
+      .replace(/cos\(/g, 'Math.cos(')
+      .replace(/tan\(/g, 'Math.tan(')
+      .replace(/log\(/g, 'Math.log10(')
+      .replace(/\^/g, '**');
+  }
+</script>
+
+</body>
+</html>

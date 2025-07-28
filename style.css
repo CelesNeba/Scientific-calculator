@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Page</title>
+  <link rel="stylesheet" href="product.css">
+</head>
+<body>
+  <header>
+    <h1>Awesome Product</h1>
+  </header>
+  
+  <main class="product-container">
+    <div class="product-image">
+      <img src="https://via.placeholder.com/400x300" alt="Product Image">
+    </div>
+    <div class="product-details">
+      <h2>Product Name</h2>
+      <p class="price">$49.99</p>
+      <p>This is a modern and high-quality product that you will love!</p>
+      <button>Add to Cart</button>
+    </div>
+  </main>
+  
+  <footer>
+    &copy; 2025 My Shop
+  </footer>
+</body>
+</html>
